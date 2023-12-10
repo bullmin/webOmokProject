@@ -4,10 +4,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>로그인</title>
-</head>
-<body>
 	<%
 		session.invalidate();
 		userLoginManager.logoutUser(session.getId());
@@ -15,5 +11,5 @@
 	<script>
 		location.href = "Index.jsp";
 	</script>
-</body>
+</head>
 </html>

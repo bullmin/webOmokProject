@@ -7,7 +7,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>오목</title>
-<<<<<<< Updated upstream
 	<style type="text/css">
         .modal {
             display: none;
@@ -27,13 +26,9 @@
     		modal.style.display = 'none';
 		}
 	</script>
-=======
 <style>
-	#Room{
-	border-color:black;
-	}
+	
 </style>
->>>>>>> Stashed changes
 </head>
 <body>
 	<%
@@ -49,15 +44,16 @@
 		%>
 		<input type="button" onclick="location.href='login.jsp'" value="로그인">
 		<input type="button" onclick="location.href='join.jsp'" value="회원가입">
+		
 		<%
 			} else {
 		%>
 		<input type="button" onclick="location.href='logoutAction.jsp'" value="로그아웃">
+		
 		<%
 			}
 		%>	
 	</header>
-<<<<<<< Updated upstream
 	<%
 		String messageContent = null;
 		if(session.getAttribute("messageContent") != null){
@@ -80,6 +76,7 @@
 			<input type="button" value="확인" onclick="disableMessageModal()">
 		</div>
 	</div>
+	
 	<script>
 		document.getElementById("messageModal").style.display = 'block';
 	</script>
@@ -88,23 +85,11 @@
 		session.removeAttribute("messageType");
 		}
 	%>
-=======
-	<section id="Rooms">
-		<button id="RoomButton">방 생성</button>
-        <% 
-            List<WaitingRoom> waitingRooms = WaitingRoomManager.getWaitingRooms();
-            for (WaitingRoom room : waitingRooms) {
-        %>
-            <section id="Room">
-                <p><strong>Room Name:</strong> <%= room.getRoomName() %></p>
-                <p><strong>Players:</strong> <%= room.getNumberOfPlayers() %></p>
-            </section>
-        <%
-            }
-        %>
-    </section>
-	 	
->>>>>>> Stashed changes
-	
+	<form method="post" action="CreateRoomServlet">
+		<input type="text" name="roomName">
+		<input type="submit" value="방 만들기">
+	</form>
+     
+
 </body>
 </html>
