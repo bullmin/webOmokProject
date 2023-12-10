@@ -1,10 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="gameroom.WaitingRoom, gameroom.WaitingRoomManager" %>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>오목</title>
+<<<<<<< Updated upstream
 	<style type="text/css">
         .modal {
             display: none;
@@ -24,6 +27,13 @@
     		modal.style.display = 'none';
 		}
 	</script>
+=======
+<style>
+	#Room{
+	border-color:black;
+	}
+</style>
+>>>>>>> Stashed changes
 </head>
 <body>
 	<%
@@ -47,6 +57,7 @@
 			}
 		%>	
 	</header>
+<<<<<<< Updated upstream
 	<%
 		String messageContent = null;
 		if(session.getAttribute("messageContent") != null){
@@ -77,6 +88,23 @@
 		session.removeAttribute("messageType");
 		}
 	%>
+=======
+	<section id="Rooms">
+		<button id="RoomButton">방 생성</button>
+        <% 
+            List<WaitingRoom> waitingRooms = WaitingRoomManager.getWaitingRooms();
+            for (WaitingRoom room : waitingRooms) {
+        %>
+            <section id="Room">
+                <p><strong>Room Name:</strong> <%= room.getRoomName() %></p>
+                <p><strong>Players:</strong> <%= room.getNumberOfPlayers() %></p>
+            </section>
+        <%
+            }
+        %>
+    </section>
+	 	
+>>>>>>> Stashed changes
 	
 </body>
 </html>
