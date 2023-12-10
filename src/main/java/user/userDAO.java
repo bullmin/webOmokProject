@@ -108,4 +108,33 @@ public class userDAO {
 		}
 		return -1;//db 오류
 	}
+	
+	public int nickNameCheck(String userNickName) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT * FROM user WHERE userNickName = ?";
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userNickName);
+			rs = pstmt.executeQuery();
+			if(rs.next() || userNickName.equals("")) {
+				return 0; //이미 존재하는 회원
+			}else {
+				return 1; //회원가입 가능
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return -1;//db 오류
+	}
 }

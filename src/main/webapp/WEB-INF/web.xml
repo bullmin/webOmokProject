@@ -35,4 +35,24 @@
     <servlet-name>userRegisterCheckServlet</servlet-name>
     <url-pattern>/userRegisterCheck</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>userNickNameCheckServlet</display-name>
+    <servlet-name>userNickNameCheckServlet</servlet-name>
+    <servlet-class>user.userNickNameCheckServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>userNickNameCheckServlet</servlet-name>
+    <url-pattern>/userNickNameCheck</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>userLoginServlet</display-name>
+    <servlet-name>userLoginServlet</servlet-name>
+    <servlet-class>user.userLoginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>userLoginServlet</servlet-name>
+    <url-pattern>/userLogin</url-pattern>
+  </servlet-mapping>
 </web-app>

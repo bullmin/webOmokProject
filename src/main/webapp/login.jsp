@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>오목</title>
-	<style type="text/css">
+<meta charset="UTF-8">
+<title>로그인</title>
+<style type="text/css">
         .modal {
             display: none;
             position: fixed;
@@ -18,35 +18,20 @@
             z-index: 1000;
         }
     </style>
-	<script type="text/javascript">
-		function disableMessageModal(){
-			var modal = document.getElementById("messageModal");
-    		modal.style.display = 'none';
-		}
-	</script>
+<script type="text/javascript">
+	function disableMessageModal(){
+		var modal = document.getElementById("messageModal");
+    	modal.style.display = 'none';
+	}
+</script>
 </head>
 <body>
-	<%
-		String userEmail = null;
-		if(session.getAttribute("userEmail") != null) {
-			userEmail = (String) session.getAttribute("userEmail");
-		}
-	%>
-	<header>
-		<a>오목 웹 게임</a>
-		<%
-			if(userEmail == null){
-		%>
-		<input type="button" onclick="location.href='login.jsp'" value="로그인">
-		<input type="button" onclick="location.href='join.jsp'" value="회원가입">
-		<%
-			} else {
-		%>
-		<input type="button" onclick="location.href='logoutAction.jsp'" value="로그아웃">
-		<%
-			}
-		%>	
-	</header>
+	<h4>로그인 양식</h4>
+	<form method="post" action="userLoginServlet">
+		<input type="text" id="userEmail" name="userEmail"><br>
+		<input type="password" id="password" name="password"><br>
+		<input type="submit" value="로그인">		
+	</form>
 	<%
 		String messageContent = null;
 		if(session.getAttribute("messageContent") != null){
@@ -77,6 +62,5 @@
 		session.removeAttribute("messageType");
 		}
 	%>
-	
 </body>
 </html>

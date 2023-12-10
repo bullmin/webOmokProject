@@ -31,6 +31,14 @@
 		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		httpRequest.send(qry);
 	}
+	function nickNameCheckFunction(){
+		var userNickName = document.getElementById("userNickName").value;
+		httpRequest.open("POST", "userNickNameCheckServlet", true);
+		var qry = "userNickName=" + userNickName;
+		httpRequest.onreadystatechange = getNickNameResult;
+		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		httpRequest.send(qry);
+	}
 	function getResult(){
 	    if (httpRequest.readyState === XMLHttpRequest.DONE) {
 	        if (httpRequest.status === 200) {
@@ -41,7 +49,23 @@
 	                document.getElementById("checkMessage").innerHTML = "사용할 수 없는 아이디 입니다.";
 	            }
 	            var modal = document.getElementById("checkModal");
-	            modal.style.display = 'flex';
+	            modal.style.display = 'block';
+	        } else {
+	            console.error('Error:', httpRequest.status);
+	        }
+	    }
+	}
+	function getNickNameResult(){
+	    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+	        if (httpRequest.status === 200) {
+	            var result = parseInt(httpRequest.responseText);
+	            if(result == 1){
+	                document.getElementById("checkMessage").innerHTML = "사용할 수 있는 닉네임 입니다.";
+	            } else{
+	                document.getElementById("checkMessage").innerHTML = "사용할 수 없는 닉네임 입니다.";
+	            }
+	            var modal = document.getElementById("checkModal");
+	            modal.style.display = 'block';
 	        } else {
 	            console.error('Error:', httpRequest.status);
 	        }
@@ -70,15 +94,27 @@
 
 </head>
 <body>
+	<%
+		String userEmail = null;
+		if(session.getAttribute("userEmail") != null){
+			userEmail = (String) session.getAttribute("userEmail");
+		}
+		if(userEmail != null){
+			session.setAttribute("messageType", "오류 메세지");
+			session.setAttribute("messageContent", "현재 로그인이 되어있는 상태입니다.");
+			response.sendRedirect("Index.jsp");
+		}
+	%>
 	<form method="post" action="userRegisterServlet">
 		<label>이메일: <input type="email" id="userEmail" name="userEmail"></label>
 		<input type="button" value="중복확인" onclick="registerCheckFunction()"><br>
 		<label>비밀번호: <input type="password" id="password" name="password"></label><br>
 		<label>비밀번호 확인: <input type="password" onkeyup="passwordCheckFunction()" id="passcheck" name="passcheck"></label><br>
-		<label>닉네임: <input type="text" id="userNickName" name="userNickName"></label><br>
+		<label>닉네임: <input type="text" id="userNickName" name="userNickName"></label>
+		<input type="button" value="중복확인" onclick="nickNameCheckFunction()"><br>
 		<h5 style="color: red" id="passwordCheckMessage"></h5>
 		<input type="submit" value="회원가입">
-		<input type="button" value="취소">
+		<input type="button" onclick="location.href='Index.jsp'" value="취소">
 	</form>	
 	<%
 		String messageContent = null;
@@ -103,7 +139,7 @@
 		</div>
 	</div>
 	<script>
-		document.getElementById("messageModal").style.display = 'flex';
+		document.getElementById("messageModal").style.display = 'block';
 	</script>
 	<%
 		session.removeAttribute("messageContent");
