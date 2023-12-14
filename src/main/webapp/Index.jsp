@@ -33,7 +33,7 @@
 		}
 	%>
 	<header>
-		<a>오목 웹 게임</a>
+		<h2>오목 웹 게임</h2>
 		<%
 			if(userEmail == null){
 		%>
@@ -42,12 +42,66 @@
 		<%
 			} else {
 		%>
+		<h5><%= userEmail %></h5>
 		<input type="button" onclick="location.href='logoutAction.jsp'" value="로그아웃">
 		<%
 			}
 		%>	
 	</header>
+	<% 
+		if(userEmail != null){		
+		%>
+		<script type="text/javascript">
+		var socket = new WebSocket("ws://localhost:8080/OmocGame/roomServer");
+		socket.onopen = function (event) {
+		        console.log("WebSocket opened:", event);
+		    };
+
+		socket.onmessage = function (event) {
+		        console.log("WebSocket message:", event.data);
+		        showModal(event.data);
+		    };
+
+		socket.onclose = function (event) {
+		        console.log("WebSocket closed:", event);
+		    };
+		function showModal(message) {
+			var modal = document.getElementById("messageModal");
+			var modalContent = document.querySelector(".modal-content");
+			var modalTitle = document.querySelector(".modal-title");
+
+        	// 메시지 내용을 모달에 표시
+        	modalTitle.innerHTML = "오류 메세지"
+        	modalContent.innerHTML = message;
+
+        	// 모달을 화면에 표시
+        	modal.style.display = 'block';
+
+       		// 확인 버튼을 누르면 모달을 닫음
+	    	modal.onclick = function () {
+	            modal.style.display = 'none';
+			};
+		}
+
+		function createRoom() {
+		        roomName = document.getElementById("roomName").value;
+		        var message = "CREATE_ROOM:" + roomName;
+		        socket.send(message);
+		    }
+		</script>
+		<div>
+			<input type="text" placeholder="방 이름을 입력하세요" id="roomName">
+			<input type="button" value="등록" onclick="createRoom()">
+		</div>
+		<%
+			}
+		%>
+	<section id="roomlist">
+		<h4>방 목록</h4>
+		
+	</section>
 	<%
+		//메세지 모달 창 
 		String messageContent = null;
 		if(session.getAttribute("messageContent") != null){
 			messageContent = (String) session.getAttribute("messageContent");
