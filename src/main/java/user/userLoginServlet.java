@@ -25,6 +25,7 @@ public class userLoginServlet extends HttpServlet {
 		int result = new userDAO().login(userEmail, password);
 		if(result == 1) {
 			request.getSession().setAttribute("userEmail", userEmail);
+			userLoginManager.loginUser(request.getSession().getId(), userEmail);
 			request.getSession().setAttribute("messageType", "성공 메세지");
 			request.getSession().setAttribute("messageContent", "로그인에 성공했습니다.");
 			response.sendRedirect("Index.jsp");
@@ -37,6 +38,11 @@ public class userLoginServlet extends HttpServlet {
 		else if(result == 0) {
 			request.getSession().setAttribute("messageType", "오류 메세지");
 			request.getSession().setAttribute("messageContent", "존재하지 않는 회원입니다.");
+			response.sendRedirect("login.jsp");
+		}
+		else if(result == 3) {
+			request.getSession().setAttribute("messageType", "오류 메세지");
+			request.getSession().setAttribute("messageContent", "이미 로그인 중인 사용자 입니다.");
 			response.sendRedirect("login.jsp");
 		}
 		else if(result == -1) {

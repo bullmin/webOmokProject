@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 
 
-
 public class userDAO {
 	DataSource ds;
 	
@@ -36,6 +35,9 @@ public class userDAO {
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				if(rs.getString("password").equals(password)) {
+					if(userLoginManager.isUserLoggedIn(userEmail)) {
+						return 3; //이미 로그인 중인 사용자
+					}
 					return 1; //로그인 성공
 				}
 				return 2;//비밀번호 틀림
