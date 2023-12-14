@@ -23,19 +23,22 @@
 			var modal = document.getElementById("messageModal");
     		modal.style.display = 'none';
 		}
+		var webSocket = new WebSocket("ws://localhost:8080/OmocGame/엔드포인트");
+		
 	</script>
 </head>
 <body>
 	<%
-		String userEmail = null;
-		if(session.getAttribute("userEmail") != null) {
-			userEmail = (String) session.getAttribute("userEmail");
-		}
+		String id = null;
+		if(session.getAttribute("id") != null) {
+			id = (String) session.getAttribute("id");
+		} 
+		
 	%>
 	<header>
 		<a>오목 웹 게임</a>
 		<%
-			if(userEmail == null){
+			if(id == null){
 		%>
 		<input type="button" onclick="location.href='login.jsp'" value="로그인">
 		<input type="button" onclick="location.href='join.jsp'" value="회원가입">

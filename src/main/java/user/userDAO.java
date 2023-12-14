@@ -23,19 +23,20 @@ public class userDAO {
 		}
 	}
 	
-	public int login(String userEmail, String password) {
+
+	public int login(String id, String password) { 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM user WHERE userEmail = ?";
+		String sql = "SELECT * FROM user WHERE id=?";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userEmail);
+			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				if(rs.getString("password").equals(password)) {
-					if(userLoginManager.isUserLoggedIn(userEmail)) {
+					if(userLoginManager.isUserLoggedIn(id)){
 						return 3; //이미 로그인 중인 사용자
 					}
 					return 1; //로그인 성공
@@ -57,17 +58,17 @@ public class userDAO {
 		}
 		return -1;//db 오류
 	}
-	public int registerCheck(String userEmail) {
+	public int registercheck(String id){
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM user WHERE userEmail = ?";
+		String sql = "SELECT * FROM user WHERE id=?";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userEmail);
+			pstmt.setString(1,id);
 			rs = pstmt.executeQuery();
-			if(rs.next() || userEmail.equals("")) {
+			if(rs.next() || id.equals("")){
 				return 0; //이미 존재하는 회원
 			}else {
 				return 1; //회원가입 가능
@@ -85,52 +86,20 @@ public class userDAO {
 		}
 		return -1;//db 오류
 	}
-	public int register(String userEmail, String password, String userNickName) {
+	public int register(String id, String password){
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		String sql = "INSERT INTO user VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO user (id, password) VALUES (?, ?)";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userEmail);
+			pstmt.setString(1, id);
 			pstmt.setString(2, password);
-			pstmt.setString(3, userNickName);
-			pstmt.setInt(4, 0);
-			pstmt.setInt(5, 0);
 			return pstmt.executeUpdate();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
 			try {
-				if(pstmt != null) pstmt.close();
-				if(conn != null) conn.close();
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return -1;//db 오류
-	}
-	
-	public int nickNameCheck(String userNickName) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = "SELECT * FROM user WHERE userNickName = ?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userNickName);
-			rs = pstmt.executeQuery();
-			if(rs.next() || userNickName.equals("")) {
-				return 0; //이미 존재하는 회원
-			}else {
-				return 1; //회원가입 가능
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				if(rs != null) rs.close();
 				if(pstmt != null) pstmt.close();
 				if(conn != null) conn.close();
 			}catch(Exception e) {

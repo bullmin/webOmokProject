@@ -55,4 +55,14 @@
     <servlet-name>userLoginServlet</servlet-name>
     <url-pattern>/userLogin</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CreateRoomServlet</display-name>
+    <servlet-name>CreateRoomServlet</servlet-name>
+    <servlet-class>game.CreateRoomServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CreateRoomServlet</servlet-name>
+    <url-pattern>/CreateRoomServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -9,17 +9,22 @@ public class GameRoom {
 	private List<GameUser> userList;
 	private GameUser roomOwner;
 	
-	public GameRoom(GameUser user) {
-		userList = new ArrayList();
+	/*
+	 * public GameRoom(GameUser user) { userList = new ArrayList();
+	 * user.enterRoom(this); userList.add(user); this.roomOwner=user; }
+	 */	
+	
+	public GameRoom(String roomName, GameUser user) {
+		this.roomName = roomName;
+		userList=new ArrayList();
 		user.enterRoom(this);
 		userList.add(user);
-		this.roomOwner=user;
-	}	
+	}
 	
-	public GameRoom(int roomId) { // 아무도 없는 방을 생성할 때
-        this.id = roomId;
-        userList = new ArrayList();
-    }
+	/*
+	 * public GameRoom(int roomId) { // 아무도 없는 방을 생성할 때 this.id = roomId; userList =
+	 * new ArrayList(); }
+	 */
 	
 	public void enterUser(GameUser user) {
 		user.enterRoom(this);
@@ -64,11 +69,11 @@ public class GameRoom {
 		this.roomName = name;
 	}
 	
-	public List getUserList() {
+	public List<GameUser> getUserList() {
 		return userList;
 	}
 	
-	public void setUserList(List userList) {
+	public void setUserList(List<GameUser> userList) {
 		this.userList=userList;
 	}
 
