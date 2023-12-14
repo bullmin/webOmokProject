@@ -14,8 +14,7 @@ public class userRegisterCheckServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
-		String userEmail = request.getParameter("userEmail");
-		response.getWriter().write(new userDAO().registerCheck(userEmail) + "");
+		String id = request.getParameter("id");
+		response.getWriter().write(new userDAO().registercheck(id) + "");
 	}
-
 }

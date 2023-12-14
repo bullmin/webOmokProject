@@ -24,21 +24,23 @@
 		httpRequest.overrideMimeType('text/xml');
 	}
 	function registerCheckFunction(){
-		var userEmail = document.getElementById("userEmail").value;
+//		var userEmail = document.getElementById("userEmail").value;
+		var id = document.getElementById("id").value;
 		httpRequest.open("POST", "userRegisterCheckServlet", true);
-		var qry = "userEmail=" + userEmail;
+//		var qry = "userEmail=" + userEmail;
+		var qry = "id=" + id;
 		httpRequest.onreadystatechange = getResult;
 		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		httpRequest.send(qry);
 	}
-	function nickNameCheckFunction(){
+	/* function nickNameCheckFunction(){
 		var userNickName = document.getElementById("userNickName").value;
 		httpRequest.open("POST", "userNickNameCheckServlet", true);
 		var qry = "userNickName=" + userNickName;
 		httpRequest.onreadystatechange = getNickNameResult;
 		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		httpRequest.send(qry);
-	}
+	} */
 	function getResult(){
 	    if (httpRequest.readyState === XMLHttpRequest.DONE) {
 	        if (httpRequest.status === 200) {
@@ -55,7 +57,7 @@
 	        }
 	    }
 	}
-	function getNickNameResult(){
+	/* function getNickNameResult(){
 	    if (httpRequest.readyState === XMLHttpRequest.DONE) {
 	        if (httpRequest.status === 200) {
 	            var result = parseInt(httpRequest.responseText);
@@ -70,7 +72,7 @@
 	            console.error('Error:', httpRequest.status);
 	        }
 	    }
-	}
+	} */
 
 	function passwordCheckFunction(){
 		var password = document.getElementById("password").value;
@@ -95,23 +97,24 @@
 </head>
 <body>
 	<%
-		String userEmail = null;
-		if(session.getAttribute("userEmail") != null){
-			userEmail = (String) session.getAttribute("userEmail");
+		String id = null;
+		if(session.getAttribute("id") != null){
+			id = (String) session.getAttribute("id");
 		}
-		if(userEmail != null){
+		if(id != null){
 			session.setAttribute("messageType", "오류 메세지");
 			session.setAttribute("messageContent", "현재 로그인이 되어있는 상태입니다.");
 			response.sendRedirect("Index.jsp");
 		}
 	%>
 	<form method="post" action="userRegisterServlet">
-		<label>이메일: <input type="email" id="userEmail" name="userEmail"></label>
+		<label>아이디: <input type="text" id="id" name="id"></label>
+		<!-- <label>이메일: <input type="email" id="userEmail" name="userEmail"></label> -->
 		<input type="button" value="중복확인" onclick="registerCheckFunction()"><br>
 		<label>비밀번호: <input type="password" id="password" name="password"></label><br>
 		<label>비밀번호 확인: <input type="password" onkeyup="passwordCheckFunction()" id="passcheck" name="passcheck"></label><br>
-		<label>닉네임: <input type="text" id="userNickName" name="userNickName"></label>
-		<input type="button" value="중복확인" onclick="nickNameCheckFunction()"><br>
+		<!-- <label>닉네임: <input type="text" id="userNickName" name="userNickName"></label> -->
+		<!-- <input type="button" value="중복확인" onclick="nickNameCheckFunction()"><br> -->
 		<h5 style="color: red" id="passwordCheckMessage"></h5>
 		<input type="submit" value="회원가입">
 		<input type="button" onclick="location.href='Index.jsp'" value="취소">

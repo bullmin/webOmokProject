@@ -14,12 +14,10 @@ public class userRegisterServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
-		String userEmail = request.getParameter("userEmail");
+		String id = request.getParameter("id");
 		String password = request.getParameter("password");
 		String passcheck = request.getParameter("passcheck");
-		String userNickName = request.getParameter("userNickName");
-		if(userEmail == null || userEmail.equals("")|| password == null || password.equals("") ||
-				passcheck == null || passcheck.equals("") || userNickName == null|| userNickName.equals("")) {
+		if(id==null || id.equals("") || password == null || password.equals("")||passcheck == null || passcheck.equals("")) {
 			request.getSession().setAttribute("messageType", "오류 메세지");
 			request.getSession().setAttribute("messageContent", "모든 칸을 입력하세요.");
 			response.sendRedirect("join.jsp");
@@ -31,7 +29,7 @@ public class userRegisterServlet extends HttpServlet {
 			response.sendRedirect("join.jsp");
 			return;
 		}
-		int result = new userDAO().register(userEmail, password, userNickName);
+		int result = new userDAO().register(id, password);
 		if(result == 1) {
 			request.getSession().setAttribute("messageType", "성공 메세지");
 			request.getSession().setAttribute("messageContent", "회원가입에 성공했습니다.");

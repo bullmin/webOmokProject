@@ -14,18 +14,19 @@ public class userLoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
-		String userEmail = request.getParameter("userEmail");
+		String id = request. getParameter("id");
 		String password = request.getParameter("password");
-		if(userEmail == null || userEmail.equals("") || password == null || password.equals("")) {
+		if(id==null || id.equals("") || password == null || password.equals("")) {
 			request.getSession().setAttribute("messageType", "오류 메세지");
 			request.getSession().setAttribute("messageContent", "모든 칸을 입력하세요.");
 			response.sendRedirect("login.jsp");
 			return;
 		}
-		int result = new userDAO().login(userEmail, password);
+		int result = new userDAO().login(id, password);
+		
 		if(result == 1) {
-			request.getSession().setAttribute("userEmail", userEmail);
-			userLoginManager.loginUser(request.getSession().getId(), userEmail);
+			request.getSession().setAttribute("id",id);
+			userLoginManager.loginUser(request.getSession().getId(), id);
 			request.getSession().setAttribute("messageType", "성공 메세지");
 			request.getSession().setAttribute("messageContent", "로그인에 성공했습니다.");
 			response.sendRedirect("Index.jsp");
