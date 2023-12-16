@@ -45,14 +45,14 @@
 		<%
 			} else {
 		%>
-		<h5><%= userEmail %></h5>
+		<h5><%= id %></h5>
 		<input type="button" onclick="location.href='logoutAction.jsp'" value="로그아웃">
 		<%
 			}
 		%>	
 	</header>
 	<% 
-		if(userEmail != null){		
+		if(id != null){		
 		%>
 		<script type="text/javascript">
 		var socket = new WebSocket("ws://localhost:8080/OmocGame/roomServer");
