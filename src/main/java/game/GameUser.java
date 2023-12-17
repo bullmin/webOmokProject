@@ -17,15 +17,14 @@ public class GameUser {
 	public void exitRoom(GameRoom room) {
 	    if (this.room == room) {
 	        this.room = null;
-	        room.exitUser(this);
 	    }
 	}
 	
-	public String getEmail() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setEmail(String id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	

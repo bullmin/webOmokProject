@@ -65,4 +65,14 @@
     <servlet-name>CreateRoomServlet</servlet-name>
     <url-pattern>/CreateRoom</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>JoinRoomServlet</display-name>
+    <servlet-name>JoinRoomServlet</servlet-name>
+    <servlet-class>game.JoinRoomServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>JoinRoomServlet</servlet-name>
+    <url-pattern>/JoinRoom</url-pattern>
+  </servlet-mapping>
 </web-app>

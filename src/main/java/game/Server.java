@@ -43,7 +43,7 @@ public class Server {
     public void onClose(Session session) {
         String room = (String) session.getUserProperties().get("room");
         clients.remove(session);
-
+  
         // 퇴장 메시지 전송
         String message = "System: " + session.getId() + " 님께서 퇴장하셨습니다.";
         sendMessageToRoom(room, message);

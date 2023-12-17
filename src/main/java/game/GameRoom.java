@@ -31,16 +31,6 @@ public class GameRoom {
 	    }
 	}
 
-	public void exitUser(GameUser user) {
-	    if (userList.contains(user)) {
-	        user.exitRoom(this);
-	        userList.remove(user);
-
-	        if (userList.size() < 1) {
-	            RoomManager.removeRoom(this);
-	        }
-	    }}
-	
 	public void close() {
         for (GameUser user : userList) {
             user.exitRoom(this);

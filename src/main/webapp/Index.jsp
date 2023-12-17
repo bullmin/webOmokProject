@@ -37,6 +37,10 @@
 		function enter(roomName){
 			
 		}
+		function joinRoom(roomName) {
+            // JoinRoomServlet 호출
+            location.href = 'JoinRoomServlet?roomName=' + roomName;
+        }
 	</script>
 </head>
 <body>
@@ -70,10 +74,14 @@
             List<GameRoom> roomList = new RoomManager().getRoomList();
             for (GameRoom room : roomList) {
         %>
-                <div class="room" onclick="location.href='gameRoom.jsp?roomName=<%=room.getRoomName() %>'">
+                <%-- <div class="room" onclick="location.href='gameRoom.jsp?roomName=<%=room.getRoomName() %>'">
                     <label>방 제목 : </label><p><%= room.getRoomName() %></p>
                     <label>참가자 수 : </label><p><%= room.getUserList().size() %></p>
-                </div>
+                </div> --%>
+                <div class="room" onclick="joinRoom('<%= room.getRoomName() %>')">
+	                <label>방 제목 : </label><p><%= room.getRoomName() %></p>
+	                <label>참가자 수 : </label><p><%= room.getUserList().size() %></p>
+            	</div>
         <%
             }
         %>
