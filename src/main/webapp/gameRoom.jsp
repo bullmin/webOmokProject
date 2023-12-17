@@ -158,7 +158,7 @@
 					<div id="chatset"></div>
 					<input type="text" id="textMessage">
 					<input type="submit" value="보내기" onclick="sendMessage()">
-					<input type="button" value="나가기">
+					<input type="button" value="나가기" onclick="leaveRoom()">
 				</fieldset>
 			</div>
 		</aside>
@@ -180,6 +180,10 @@
 				}
 			}
 		});
+		function leaveRoom() {
+	        // LeaveRoomServlet 호출 또는 필요한 나가기 처리를 수행
+	        location.href = 'LeaveRoomServlet'; // LeaveRoomServlet이 실제로 구현되어야 함
+	    }
 	</script>
 </body>
 </html>

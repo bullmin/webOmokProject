@@ -34,9 +34,7 @@
 			var modal = document.getElementById("messageModal");
     		modal.style.display = 'none';
 		}
-		function enter(roomName){
-			
-		}
+		
 		function joinRoom(roomName) {
             // JoinRoomServlet 호출
             location.href = 'JoinRoomServlet?roomName=' + roomName;
@@ -80,7 +78,7 @@
                 </div> --%>
                 <div class="room" onclick="joinRoom('<%= room.getRoomName() %>')">
 	                <label>방 제목 : </label><p><%= room.getRoomName() %></p>
-	                <label>참가자 수 : </label><p><%= room.getUserList().size() %></p>
+	                <label>참가자 수 : </label><p><%= room.getUserList().size() %>/ 2 </p>
             	</div>
         <%
             }

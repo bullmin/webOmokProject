@@ -38,7 +38,6 @@ public class JoinRoomServlet extends HttpServlet {
             if (roomToJoin.getUserList().size() < 2) {
                 // 방 참여
                 GameUser user = new GameUser(userId);
-                user.enterRoom(roomToJoin);
                 roomToJoin.enterUser(user);
 
                 // 게임 방 페이지로 리다이렉션

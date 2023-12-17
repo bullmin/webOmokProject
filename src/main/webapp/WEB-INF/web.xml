@@ -75,4 +75,14 @@
     <servlet-name>JoinRoomServlet</servlet-name>
     <url-pattern>/JoinRoom</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>leaveRoomSerlvet</display-name>
+    <servlet-name>leaveRoomSerlvet</servlet-name>
+    <servlet-class>game.leaveRoomSerlvet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>leaveRoomSerlvet</servlet-name>
+    <url-pattern>/leaveRoomSerlvet</url-pattern>
+  </servlet-mapping>
 </web-app>

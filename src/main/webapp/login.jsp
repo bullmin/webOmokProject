@@ -6,17 +6,31 @@
 <meta charset="UTF-8">
 <title>로그인</title>
 <style type="text/css">
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 1px solid #ccc;
-            background-color: #fff;
-            padding: 20px;
-            z-index: 1000;
-        }
+        	
+	.loginform input {
+		width: 50%;
+		padding: 12px 20px;
+		margin: 8px 0;
+		display: inline-block;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-sizing: border-box;
+	}
+	input[type=submit] {
+		cursor: pointer;
+	}
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid #ccc;
+        background-color: #fff;
+        padding: 20px;
+        z-index: 1000;
+    }
     </style>
 <script type="text/javascript">
 	function disableMessageModal(){
@@ -27,7 +41,7 @@
 </head>
 <body>
 	<h4>로그인 양식</h4>
-	<form method="post" action="userLoginServlet">
+	<form method="post" action="userLoginServlet" class="loginform">
 		<input type="text" id="id" name="id"><br>
 <!-- 		<input type="text" id="userEmail" name="userEmail"><br> -->
 		<input type="password" id="password" name="password"><br>

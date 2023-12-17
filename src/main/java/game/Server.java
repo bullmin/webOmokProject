@@ -3,8 +3,13 @@ package game;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
@@ -12,12 +17,11 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
-import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.EndpointConfig;
 
 @ServerEndpoint(value = "/chat/{room}", configurator = HttpSessionConfigurator.class)
 public class Server {
 	private static final Set<Session> clients = Collections.synchronizedSet(new HashSet<>());
+//	private static final Map<String, Long> sessionExitTimestamps = new ConcurrentHashMap<>(); 
 	
 	private static void sendMessageToRoom(String room, String message) {
         for (Session client : clients) {
@@ -40,7 +44,20 @@ public class Server {
         
         String id = (String) httpSession.getAttribute("id");
         session.getUserProperties().put("id", id);
-
+//        if(sessionExitTimestamps.containsKey(id + room)) {
+//        	long exitTimestamp = sessionExitTimestamps.get(id + room);
+//        	long currentTime = System.currentTimeMillis();
+//        	long timeDiff = currentTime - exitTimestamp;
+//        	
+//        	if(timeDiff <5000) {
+//        		try {
+//        			session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION,"새로고침"));
+//        			return;
+//        		} catch(IOException e) {
+//        			e.printStackTrace();
+//        		}
+//        	}
+//        }
         // 입장 메시지 전송
         String message = "System: " + id + "님께서 입장하셨습니다.";
         sendMessageToRoom(room, message);
@@ -49,6 +66,9 @@ public class Server {
 	@OnClose
     public void onClose(Session session) {
         String room = (String) session.getUserProperties().get("room");
+        String userId = (String) session. getUserProperties().get("id");
+//        sessionExitTimestamps.put(userId + room,System.currentTimeMillis());
+        
         clients.remove(session);
   
         // 퇴장 메시지 전송

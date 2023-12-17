@@ -8,36 +8,28 @@ public class GameRoom {
 	private List<GameUser> userList;
 	private GameUser roomOwner;
 	
-	/*
-	 * public GameRoom(GameUser user) { userList = new ArrayList();
-	 * user.enterRoom(this); userList.add(user); this.roomOwner=user; }
-	 */	
-	
 	public GameRoom(String roomName, GameUser user) {
 		this.roomName = roomName;
 		userList=new ArrayList();
-		user.enterRoom(this);
 		userList.add(user);
 	}
 	
-	/*
-	 * public GameRoom(int roomId) { // 아무도 없는 방을 생성할 때 this.id = roomId; userList =
-	 * new ArrayList(); }
-	 */
-	
 	public void enterUser(GameUser user) {
-	    if (!userList.contains(user)) {
 	        userList.add(user);
-	    }
 	}
 
 	public void close() {
-        for (GameUser user : userList) {
-            user.exitRoom(this);
-        }
         this.userList.clear();
         this.userList = null;
     }
+	
+	public void exitUser(GameUser user) {
+        userList.remove(user);
+        // 사용자가 방에서 나가면서 방이 비어있으면 방을 닫음
+        if (userList.isEmpty()) {
+            RoomManager.removeRoom(this);
+        }
+    }	
 	
 	public void setOwner(GameUser gameUser) {
 		this.roomOwner =gameUser;
