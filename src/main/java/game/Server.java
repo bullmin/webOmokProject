@@ -12,8 +12,10 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.EndpointConfig;
 
-@ServerEndpoint("/chat/{room}")
+@ServerEndpoint(value = "/chat/{room}", configurator = HttpSessionConfigurator.class)
 public class Server {
 	private static final Set<Session> clients = Collections.synchronizedSet(new HashSet<>());
 	
@@ -30,12 +32,17 @@ public class Server {
     }	
 	
 	@OnOpen
-    public void onOpen(Session session, @PathParam("room") String room) {
+    public void onOpen(Session session, @PathParam("room") String room, EndpointConfig config) {
         clients.add(session);
         session.getUserProperties().put("room", room);
+        
+        HttpSession httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
+        
+        String id = (String) httpSession.getAttribute("id");
+        session.getUserProperties().put("id", id);
 
         // 입장 메시지 전송
-        String message = "System: " + session.getId() + "님께서 입장하셨습니다.";
+        String message = "System: " + id + "님께서 입장하셨습니다.";
         sendMessageToRoom(room, message);
     }
 	
@@ -45,14 +52,14 @@ public class Server {
         clients.remove(session);
   
         // 퇴장 메시지 전송
-        String message = "System: " + session.getId() + " 님께서 퇴장하셨습니다.";
+        String message = "System: " + session.getUserProperties().get("id") + " 님께서 퇴장하셨습니다.";
         sendMessageToRoom(room, message);
     }
 	
 	@OnMessage
     public void onMessage(String message, Session session) throws IOException {
         String room = (String) session.getUserProperties().get("room");
-        sendMessageToRoom(room, session.getId() + ": " + message);
+        sendMessageToRoom(room, session.getUserProperties().get("id") + ": " + message);
     }
 	
 	@OnError

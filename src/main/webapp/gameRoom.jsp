@@ -97,7 +97,7 @@
             // Handle incoming messages
             var messageTextArea = document.getElementById("chatset");
             var messageText = "";
-            messageText = event.data + "\n";
+            messageText = event.data + "<br>";
             messageTextArea.innerHTML += messageText;
         };
 
