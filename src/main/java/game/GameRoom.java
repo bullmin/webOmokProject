@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameRoom {
-	private int id;
 	private String roomName;
 	private List<GameUser> userList;
 	private GameUser roomOwner;
@@ -27,19 +26,20 @@ public class GameRoom {
 	 */
 	
 	public void enterUser(GameUser user) {
-		user.enterRoom(this);
-		userList.add(user);
+	    if (!userList.contains(user)) {
+	        userList.add(user);
+	    }
 	}
-	
+
 	public void exitUser(GameUser user) {
-		user.exitRoom(this);
-		userList.remove(user);
-		
-		if(userList.size()<1) {
-			RoomManager.removeRoom(this);
-			return;
-		}
-	}
+	    if (userList.contains(user)) {
+	        user.exitRoom(this);
+	        userList.remove(user);
+
+	        if (userList.size() < 1) {
+	            RoomManager.removeRoom(this);
+	        }
+	    }}
 	
 	public void close() {
         for (GameUser user : userList) {
@@ -51,14 +51,6 @@ public class GameRoom {
 	
 	public void setOwner(GameUser gameUser) {
 		this.roomOwner =gameUser;
-	}
-	
-	public int getId() {
-		return id;
-	}
-	
-	public void setId() {
-		this.id =id;
 	}
 	
 	public String getRoomName() {
@@ -84,6 +76,4 @@ public class GameRoom {
 	public void setRoomOwner(GameUser roomOwner) {
 		this.roomOwner = roomOwner;
 	}
-	
-	
 }

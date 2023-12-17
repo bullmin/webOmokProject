@@ -51,6 +51,7 @@
             width: 50%;
         }
 
+<<<<<<< HEAD
         #chatset {
             border: 1px solid #000000;
             width: 100%;
@@ -123,6 +124,99 @@
             </div>
         </aside>
     </div>
+=======
+		.choice{
+			margin-bottom: 10px; /* You can adjust the margin value as needed */
+		}
+	</style>
+	<script>
+    // 통신을 위한 WebSocket 객체
+    var webSocket;
+
+    // WebSocket 연결을 초기화하는 함수
+    function connectWebSocket() {
+        // URL 파라미터에서 방 이름 가져오기
+        var roomName = "<%= request.getParameter("roomName") %>";
+
+        // Open WebSocket connection
+        webSocket = new WebSocket("ws://localhost:8080/OmocGame/chat/" + roomName);
+
+        // Set up event listeners
+        webSocket.onopen = function (event) {
+            console.log("입장하셨습니다.");
+        };
+
+        webSocket.onmessage = function (event) {
+            // Handle incoming messages
+            var messageTextArea = document.getElementById("chatset");
+            var messageText = "";
+            messageText = event.data + "\n";
+            messageTextArea.innerHTML += messageText;
+        };
+
+        webSocket.onclose = function (event) {
+            console.log("퇴장하셨습니다.");
+        };
+    }
+
+    // Function to send a message through WebSocket
+    function sendMessage() {
+        var messageInput = document.getElementById("textMessage");
+        var message = messageInput.value;
+
+        // Send message only if WebSocket is open and message is not empty
+        if (webSocket.readyState === WebSocket.OPEN && message.trim() !== "") {
+            webSocket.send(message);
+            messageInput.value = "";  // Clear the input field
+        }
+    }
+
+    // Function to send a message when Enter key is pressed
+    function handleKeyPress(event) {
+        if (event.keyCode === 13) {
+            // Enter key is pressed
+            event.preventDefault();  // Prevent the default action (form submission)
+            sendMessage();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        connectWebSocket();
+    });
+</script>
+</head>
+<body>
+	<div class="container">
+		<section>
+			<div id="baduk-board"></div>
+		</section>
+		<aside>
+			<div id="aside-box1">
+				<fieldset id="select-color">
+					<h4>백돌</h4>
+					<input type="button" class="choice" value="선택">
+					<h4>흑돌</h4>
+					<input type="button" class="choice" value="선택">
+				</fieldset>
+				<fieldset id="radio-group">
+					<h4>대결 횟수 설정</h4>
+					<label><input type="radio" name="gameType" value="단판승" checked>단판승</label><br>
+					<label><input type="radio" name="gameType" value="3판 2선승">3판 2선승</label><br>
+					<label><input type="radio" name="gameType" value="5판 3선승">5판 3선승</label>
+					<input type="button" value="게임 시작">
+				</fieldset>
+			</div>
+			<div>
+				<fieldset>
+					<div id="chatset"></div>
+					<input type="text" id="textMessage">
+					<input type="submit" value="보내기" onclick="sendMessage()">
+					<input type="button" value="나가기">
+				</fieldset>
+			</div>
+		</aside>
+	</div>
+>>>>>>> 7ac724c9fe6538fde7c8f9198a780b989ddd6c67
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {

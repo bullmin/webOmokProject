@@ -1,30 +1,38 @@
 package game;
 
 public class GameUser {
-	private String email;
+	private String id;
 	private GameRoom room;
 	
-	public GameUser(String email) {
-		this.email=email;
-		
-	}
-	public void enterRoom(GameRoom room) {
-		room.enterUser(this);
-		this.room=room;
+	public GameUser(String id) {
+		this.id=id;
 	}
 	
+	public void enterRoom(GameRoom room) {
+	    if (this.room != room) {
+	        this.room = room;
+	    }
+	}
+
 	public void exitRoom(GameRoom room) {
-		this.room=null;
+	    if (this.room == room) {
+	        this.room = null;
+	        room.exitUser(this);
+	    }
 	}
+	
 	public String getEmail() {
-		return email;
+		return id;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	
+	public void setEmail(String id) {
+		this.id = id;
 	}
+	
 	public GameRoom getRoom() {
 		return room;
 	}
+	
 	public void setRoom(GameRoom room) {
 		this.room = room;
 	}

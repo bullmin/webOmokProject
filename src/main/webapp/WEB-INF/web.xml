@@ -63,6 +63,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>CreateRoomServlet</servlet-name>
-    <url-pattern>/CreateRoomServlet</url-pattern>
+    <url-pattern>/CreateRoom</url-pattern>
   </servlet-mapping>
 </web-app>

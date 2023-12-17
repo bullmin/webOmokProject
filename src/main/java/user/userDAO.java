@@ -8,8 +8,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-
-
 public class userDAO {
 	DataSource ds;
 	
@@ -17,13 +15,11 @@ public class userDAO {
 		try {
 			Context ctx = new InitialContext();
 			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/mysql");
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-
 	public int login(String id, String password) { 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
