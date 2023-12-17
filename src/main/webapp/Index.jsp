@@ -47,7 +47,7 @@
 		} 
 	%>
 	<header>
-		<h2>오목 웹 게임</h2>
+		<a>오목 웹 게임</a>
 		<%
 			if(id == null){
 		%>
@@ -56,66 +56,11 @@
 		<%
 			} else {
 		%>
-		<h5><%= id %></h5>
 		<input type="button" onclick="location.href='logoutAction.jsp'" value="로그아웃">
 		<%
 			}
 		%>	
 	</header>
-<<<<<<< HEAD
-	<% 
-		if(id != null){		
-		%>
-		<script type="text/javascript">
-		var socket = new WebSocket("ws://localhost:8080/OmocGame/roomServer");
-		socket.onopen = function (event) {
-		        console.log("WebSocket opened:", event);
-		    };
-
-		socket.onmessage = function (event) {
-		        console.log("WebSocket message:", event.data);
-		        showModal(event.data);
-		    };
-
-		socket.onclose = function (event) {
-		        console.log("WebSocket closed:", event);
-		    };
-		function showModal(message) {
-			var modal = document.getElementById("messageModal");
-			var modalContent = document.querySelector(".modal-content");
-			var modalTitle = document.querySelector(".modal-title");
-
-        	// 메시지 내용을 모달에 표시
-        	modalTitle.innerHTML = "오류 메세지"
-        	modalContent.innerHTML = message;
-
-        	// 모달을 화면에 표시
-        	modal.style.display = 'block';
-
-       		// 확인 버튼을 누르면 모달을 닫음
-	    	modal.onclick = function () {
-	            modal.style.display = 'none';
-			};
-		}
-
-		function createRoom() {
-		        roomName = document.getElementById("roomName").value;
-		        var message = "CREATE_ROOM:" + roomName;
-		        socket.send(message);
-		    }
-		</script>
-		<div>
-			<input type="text" placeholder="방 이름을 입력하세요" id="roomName">
-			<input type="button" value="등록" onclick="createRoom()">
-		</div>
-		<%
-			}
-		%>
-	<section id="roomlist">
-		<h4>방 목록</h4>
-		
-	</section>
-=======
 	<form action="CreateRoomServlet" method="post">
         <input type="text" name="roomName" placeholder="방 제목을 입력하세요" required>
         <input type="submit" value="방 만들기">
@@ -133,9 +78,7 @@
             }
         %>
     </section>
->>>>>>> 7ac724c9fe6538fde7c8f9198a780b989ddd6c67
 	<%
-		//메세지 모달 창 
 		String messageContent = null;
 		if(session.getAttribute("messageContent") != null){
 			messageContent = (String) session.getAttribute("messageContent");
