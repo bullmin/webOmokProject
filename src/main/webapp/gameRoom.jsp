@@ -67,6 +67,7 @@
 			height: 30px;
 			background-color: #e7ae28;
 			border: 1px solid #333;
+			position: relative;
 		}
 		h4 {
 			margin-bottom: 5px; /* You can adjust the margin value as needed */
@@ -75,6 +76,17 @@
 		.choice{
 			margin-bottom: 10px; /* You can adjust the margin value as needed */
 		}
+		.stone {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #000;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
 	</style>
 	<script>
     // 통신을 위한 WebSocket 객체
@@ -165,21 +177,52 @@
 	</div>
 
 	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const badukBoard = document.getElementById("baduk-board");
+	document.addEventListener("DOMContentLoaded", function () {
+	    const badukBoard = document.getElementById("baduk-board");
+	    let currentTurn = "black"; // 초기 턴은 흑돌
 
-			// 바둑판 그리기
-			for (let row = 0; row < 18; row++) {
-				for (let col = 0; col < 18; col++) {
-					const intersection = document.createElement("div");
-					intersection.className = "baduk-intersection";
-					intersection.dataset.row = row;
-					intersection.dataset.col = col;
+	    // 바둑판 그리기
+	    for (let row = 0; row < 18; row++) {
+	        for (let col = 0; col < 18; col++) {
+	            const intersection = document.createElement("div");
+	            intersection.className = "baduk-intersection";
+	            intersection.dataset.row = row;
+	            intersection.dataset.col = col;
 
-					badukBoard.appendChild(intersection);
-				}
-			}
-		});
+	            intersection.addEventListener("mouseenter", function () {
+	                this.style.backgroundColor = "#e0e0e0";
+	            });
+
+	            intersection.addEventListener("mouseleave", function () {
+	                this.style.backgroundColor = "";
+	            });
+
+	            intersection.addEventListener("click", function () {
+	                drawStone(this);
+	            });
+
+	            badukBoard.appendChild(intersection);
+	        }
+	    }
+
+	    // 돌을 그리는 함수
+	    function drawStone(cell) {
+	        // 이미 돌이 그려진 경우 무시
+	        if (cell.querySelector(".stone")) {
+	            return;
+	        }
+
+	        const stone = document.createElement("div");
+	        stone.className = "stone";
+	        stone.style.backgroundColor = currentTurn === "black" ? "#000" : "#fff"; // 턴에 따라 색 변경
+
+	        // 해당 칸에 돌 추가
+	        cell.appendChild(stone);
+
+	        // 턴 변경
+	        currentTurn = currentTurn === "black" ? "white" : "black";
+	    }
+	});
 		function leaveRoom() {
 	        // LeaveRoomServlet 호출 또는 필요한 나가기 처리를 수행
 	        location.href = 'LeaveRoomServlet'; // LeaveRoomServlet이 실제로 구현되어야 함
