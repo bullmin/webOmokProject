@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>  
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,21 +38,19 @@
 			padding: 10px;
 			margin: 8px;
 		}
-		#aside-box1{
-			display: flex;
-			
-		}
-		#select-color{
-			width: 50%;
-		}
-		#radio-group{
-			width: 50%;
-		}
-
+		#gameStart {
+    		display: flex;
+    		align-items: center;
+    		justify-content: center;
+    		border: 1px solid #000000;
+    		width: 100%;
+    		height: 200px;
+}
 		#chatset {
 			border: 1px solid #000000;
 			width: 100%;
 			height: 400px;
+			overflow-y: auto;
 		}
 
 		#baduk-board {
@@ -91,7 +89,7 @@
 	<script>
     // 통신을 위한 WebSocket 객체
     var webSocket;
-
+	var omokSocket;
     // WebSocket 연결을 초기화하는 함수
     function connectWebSocket() {
         // URL 파라미터에서 방 이름 가져오기
@@ -111,6 +109,7 @@
             var messageText = "";
             messageText = event.data + "<br>";
             messageTextArea.innerHTML += messageText;
+            messageTextArea.scrollTop = messageTextArea.scrollHeight;
         };
 
         webSocket.onclose = function (event) {
@@ -133,37 +132,88 @@
     // Function to send a message when Enter key is pressed
     function handleKeyPress(event) {
         if (event.keyCode === 13) {
-            // Enter key is pressed
-            event.preventDefault();  // Prevent the default action (form submission)
+            event.preventDefault();
             sendMessage();
         }
     }
+    function connectOmokSocket(){
+    	var roomName = "<%= request.getParameter("roomName") %>";
+    	
+    	omokSocket = new WebSocket("ws://localhost:8080/OmocGame/game/" + roomName);
 
+        omokSocket.onopen = function (event) {
+            console.log("오목방 입장하셨습니다.");
+        };
+
+        omokSocket.onmessage = function (event) {
+            console.log(event.data);
+        };
+
+        omokSocket.onclose = function (event) {
+            console.log("오목방 퇴장하셨습니다.");
+        };
+    }
+	function startGame(){
+		var message = "startGame";
+		if(omokSocket.readyState === WebSocket.OPEN ){
+			omokSocket.send(message);
+		}
+	}
     document.addEventListener("DOMContentLoaded", function () {
         connectWebSocket();
+        connectOmokSocket()
     });
 </script>
 </head>
 <body>
+	<%@ page import="game.GameUser" %>
+	<%@ page import="game.GameRoom" %>
+	<%@ page import="game.RoomManager" %>
+	<%@ page import="java.util.List" %>
+	<%
+    	String id = null;
+		GameUser userOwner = null;
+    	String roomOwner = null;
+    	int playerNum = 0;
+    	if(session.getAttribute("id") != null){
+        	id = (String) session.getAttribute("id");
+    	}
+    	String roomName = request.getParameter("roomName");
+    	GameRoom gameRoom = null;
+    	List<GameRoom> roomList = new RoomManager().getRoomList();
+    	for(GameRoom room : roomList){
+        	if(room.getRoomName().equals(roomName)){
+            	gameRoom = room;
+            	userOwner = gameRoom.getRoomOwner();
+            	if(userOwner.getId().equals(id)){
+            		roomOwner = id;
+            	}
+        	}
+    	}
+%>
+	<script type="text/javascript">
+		var id = "<%= id %>";
+		var roomOwner = "<%= roomOwner %>";
+		console.log(id);
+		console.log(roomOwner);
+	</script>
 	<div class="container">
 		<section>
 			<div id="baduk-board"></div>
 		</section>
 		<aside>
-			<div id="aside-box1">
-				<fieldset id="select-color">
-					<h4>백돌</h4>
-					<input type="button" class="choice" value="선택">
-					<h4>흑돌</h4>
-					<input type="button" class="choice" value="선택">
-				</fieldset>
-				<fieldset id="radio-group">
-					<h4>대결 횟수 설정</h4>
-					<label><input type="radio" name="gameType" value="단판승" checked>단판승</label><br>
-					<label><input type="radio" name="gameType" value="3판 2선승">3판 2선승</label><br>
-					<label><input type="radio" name="gameType" value="5판 3선승">5판 3선승</label>
-					<input type="button" value="게임 시작">
-				</fieldset>
+			<div id="gameStart">
+				<input type="button" value="게임 시작" 
+				<%
+					if((roomOwner != null && roomOwner.equals(id))|| gameRoom.getUserList().size() < 2){
+				%> onclick="startGame()"
+				<%
+					} else {
+				%>
+				 disabled
+				<%
+					} 
+				%>>
 			</div>
 			<div>
 				<fieldset>
@@ -209,6 +259,7 @@
 	    function drawStone(cell) {
 	        // 이미 돌이 그려진 경우 무시
 	        if (cell.querySelector(".stone")) {
+	        	alert("이미 바둑돌이 있는 곳에 다시 돌을 둘 수 없습니다.")
 	            return;
 	        }
 
@@ -223,9 +274,12 @@
 	        currentTurn = currentTurn === "black" ? "white" : "black";
 	    }
 	});
+	function removeStone(){
+		var stones = document.getElementsByClassName("stone");
+		stones.parentNode.removeChild(stones);
+	}
 		function leaveRoom() {
-	        // LeaveRoomServlet 호출 또는 필요한 나가기 처리를 수행
-	        location.href = 'LeaveRoomServlet'; // LeaveRoomServlet이 실제로 구현되어야 함
+	        location.href = 'LeaveRoomServlet';
 	    }
 	</script>
 </body>
