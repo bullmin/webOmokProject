@@ -153,7 +153,8 @@
             var messageSplit = message.split(':');
             if(messageSplit[0] === "startGame"){
             	stoneColor = messageSplit[1];
-            	removeStone();
+            	currentTurn = "black";
+            	removeStones();
             	gameState = true;
             	console.log(stoneColor);
             }
@@ -162,12 +163,28 @@
             	var row = move.split(',')[0];
             	var col = move.split(',')[1];
             	drawStone(row, col);
+            	setTimeout(100);
+            	if(!checkWinCondition()){
+            		if(stoneColor === currentTurn){
+            			sendOmokMessage("ChangeTurn:"+stoneColor);
+            		}                	
+                }else{
+                	console.log(currentTurn + " Win");
+                	sendOmokMessage("Win");
+                }
             }
-            if(messageSplit[1] === "ChangeTurn"){
-            	currentTurn = currentTurn === "black" ? "white" : "black";
+            else if (messageSplit[0] === "ChangeTurn") {
+            	currentTurn = messageSplit[1];
             }
             else if(messageSplit[1] === "NotReady"){
             	alert("상대가 없습니다.");
+            }
+            else if(messageSplit[1] === "Win"){
+            	gameState = false;
+            	var messageTextArea = document.getElementById("chatset");
+            	var messageText = currentTurn +" Win<br>";
+            	messageTextArea.innerHTML += messageText;
+                messageTextArea.scrollTop = messageTextArea.scrollHeight;            	
             }
         };
 
@@ -191,18 +208,79 @@
 	        }
 	    });		
 	}
-	async function drawStone(row, col) {
+	
+	function drawStone(row, col) {
+		console.log("Draw stone at", row, col);
     	const cell = document.querySelector('.baduk-intersection[data-row="' + row + '"][data-col="' + col + '"]');
     	
         const stone = document.createElement("div");
         stone.className = "stone";
-        stone.style.backgroundColor = currentTurn === "black" ? "#000" : "#fff"; // 턴에 따라 색 변경
+        if(currentTurn === "black"){
+        	stone.style.backgroundColor ="#000";
+        }else{
+        	stone.style.backgroundColor ="#fff";
+        }
 
         // 해당 칸에 돌 추가
-        cell.appendChild(stone);
-        await new Promise(resolve => setTimeout(resolve, 100)); // 기다리기
-        sendOmokMessage("ChangeTurn");
+        cell.appendChild(stone);        
     }
+	function checkWinCondition() {
+		console.log("Checking win condition");
+	    const intersections = document.querySelectorAll('.baduk-intersection');
+
+	    // 각 intersection에 대해 승리 조건 확인
+	    for (const intersection of intersections) {
+	        const row = intersection.dataset.row;
+	        const col = intersection.dataset.col;
+
+	        // 가로, 세로, 대각선에 대해 승리 조건 확인
+	        if (
+	            checkLine(row, col, 1, 0) || // 가로
+	            checkLine(row, col, 0, 1) || // 세로
+	            checkLine(row, col, 1, 1) || // 대각선 (왼쪽 위에서 오른쪽 아래)
+	            checkLine(row, col, 1, -1)   // 대각선 (왼쪽 아래에서 오른쪽 위)
+	        ) {
+	            return true; // 승리 조건이 만족되면 게임 종료
+	        }
+	    }
+
+	    return false; // 아직 승리 조건이 만족되지 않음
+	}
+	function checkLine(row, col, rowIncrement, colIncrement) {
+	    var currentColor = "";
+
+	    if (currentTurn === "black") {
+	        currentColor = "rgb(0, 0, 0)";
+	    } else {
+	        currentColor = "rgb(255, 255, 255)";
+	    }
+
+	    // 현재 위치에서 시작하여 일정 방향으로 다섯 개의 돌이 같은 색인지 확인
+	    let count = 0;
+	    for (let i = 0; i < 5; i++) {
+	        const newRow = parseInt(row) + i * rowIncrement;
+	        const newCol = parseInt(col) + i * colIncrement;
+
+	        const cell = document.querySelector('.baduk-intersection[data-row="' + newRow + '"][data-col="' + newCol + '"]');
+	        let stone = null;
+
+	        if (cell) {
+	            stone = cell.querySelector(".stone");
+	        }
+
+	        if (stone && stone.style.backgroundColor === currentColor) {
+	            count++;
+	        } else {
+	            count = 0; // 연속된 돌이 끊겼을 때 count 초기화
+	        }
+
+	        if (count === 5) {
+	            return true; // 다섯 개의 돌이 같은 색이면 승리 조건이 만족됨
+	        }
+	    }
+
+	    return false; // 다섯 개의 돌이 같은 색이 아니면 승리 조건이 만족되지 않음
+	}
     document.addEventListener("DOMContentLoaded", function () {
         connectWebSocket();
         connectOmokSocket()
@@ -308,10 +386,11 @@
 	        }
 	    }	    
 	});
-	function removeStone(){
-		var stones = document.getElementsByClassName("stone");
-		
-		if (stones && stones.length > 0) {
+	function removeStones() {
+	    var stones = document.getElementsByClassName("stone");
+
+	    // 돌이 한 번에 모두 지워지도록 추가
+	    while (stones.length > 0) {
 	        stones[0].parentNode.removeChild(stones[0]);
 	    }
 	}

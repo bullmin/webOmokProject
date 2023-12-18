@@ -34,9 +34,6 @@ public class OmokServer {
 
         session.getUserProperties().put("id", id);
         playerColors.put(id, "unknown"); // 초기 돌 색은 "unknown"으로 설정
-
-        // 초기 게임 상태를 모든 클라이언트에게 브로드캐스트
-        broadcastGameState(session, room, "boardReset");
     }
 
     @OnMessage
@@ -51,30 +48,24 @@ public class OmokServer {
             }
             
         }
-        else if("ChangeTurn".equals(message)) {
-        	handleTurnChange(session, room);
+        else if(message.startsWith("ChangeTurn:")) {
+        	String messageSplit = message.split(":")[1];
+        	handleTurnChange(session, room, messageSplit);
         }
         else if(message.startsWith("stoneMove:")) {
         	String[] messageSplit = message.substring("stoneMove:".length()).split(",");
         	handleStoneMove(messageSplit[0], messageSplit[1], room);
         }
+        else if(message.equals("Win")) {
+        	broadcastGameState(session, room, message);
+        }
         System.out.println(message);
     }
-    
-    private void handleTurnChange(Session senderSession, String room) {
-        String gameState = "ChangeTurn";
-
-        try {
-            for (Session userSession : sessions) {
-                if (userSession.isOpen() && userSession.getUserProperties().get("room") != null &&
-                        userSession.getUserProperties().get("room").equals(room) &&
-                        !userSession.equals(senderSession)) { // 중복 방지를 위해 현재 세션과 같은 세션에는 보내지 않도록 추가
-                    userSession.getBasicRemote().sendText(gameState);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private boolean isTurnBlack(String color) {
+    	if(color.equals("black")) {
+    		return true;
+    	}
+    	return false;
     }
 
     @OnClose
@@ -130,21 +121,40 @@ public class OmokServer {
             e.printStackTrace();
         }
     }
+    
+    private void handleTurnChange(Session currentSession, String room, String Color) {
+        try {
+            for (Session userSession : sessions) {
+                if (userSession.isOpen() && userSession.getUserProperties().get("room") != null &&
+                        userSession.getUserProperties().get("room").equals(room)) {
+                	String gameState = "";
+                    if(isTurnBlack(Color)) {
+                    	gameState = "white";
+                    }
+                    else {
+                    	gameState = "black";
+                    }
+
+                    userSession.getBasicRemote().sendText("ChangeTurn:"+gameState);
+                    System.out.println(gameState);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private String createGameState(String rMessage) {
         String message = "";
         switch (rMessage) {
-            case "boardReset":
-                message = "message:boardReset";
-                break;
             case "startGame":
                 message = "startGame";
                 break;
             case "NotReady":
                 message = "message:NotReady";
                 break;
-            case "ChangeTurn":
-                message = "message:ChangeTurn";
+            case "Win":
+                message = "message:Win";
                 break;
         }
         return message;
