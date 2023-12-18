@@ -43,7 +43,6 @@
 	<h4>로그인 양식</h4>
 	<form method="post" action="userLoginServlet" class="loginform">
 		<input type="text" id="id" name="id"><br>
-<!-- 		<input type="text" id="userEmail" name="userEmail"><br> -->
 		<input type="password" id="password" name="password"><br>
 		<input type="submit" value="로그인">		
 	</form>

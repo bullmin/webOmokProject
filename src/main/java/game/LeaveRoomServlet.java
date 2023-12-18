@@ -26,24 +26,20 @@ public class LeaveRoomServlet extends HttpServlet {
             if (userRoom != null) {
                 // 방에서 나가는 사용자 찾기
                 GameUser leavingUser = findUserInRoom(userRoom, userId);
-
-                if (leavingUser != null) {
-                    // 사용자가 속한 방에서 나가기
-                    userRoom.exitUser(leavingUser);
-                    
+                if(userRoom.getUserList().size()==2 &&leavingUser == userRoom.getRoomOwner() ) {
+                		userRoom.setOwner(userRoom.getUserList().get(1));
                 }
-
+            	userRoom.exitUser(leavingUser);
+                
                 // 방 목록을 다시 가져와서 세션에 저장
                 RoomManager.setRoomList(RoomManager.getRoomList());
                 List<GameRoom> roomList = RoomManager.getRoomList();
                 session.setAttribute("roomList", roomList);
             }
-
             // 사용자가 나간 후 어디로 이동할지 결정 (예: 로비 페이지)
             response.sendRedirect("Index.jsp");
         }
     }
-
     // 사용자가 속한 방을 찾아서 반환하는 메서드
     private GameRoom getUserRoom(String userId) {
         List<GameRoom> roomList = RoomManager.getRoomList();
@@ -55,10 +51,8 @@ public class LeaveRoomServlet extends HttpServlet {
                 }
             }
         }
-
         return null; // 사용자가 속한 방이 없는 경우
     }
-
     // 방에서 특정 ID를 가진 사용자를 찾아서 반환하는 메서드
     private GameUser findUserInRoom(GameRoom room, String userId) {
         List<GameUser> userList = room.getUserList();
@@ -68,7 +62,6 @@ public class LeaveRoomServlet extends HttpServlet {
                 return user;
             }
         }
-
         return null; // 사용자를 찾지 못한 경우
     }
 }

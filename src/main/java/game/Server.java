@@ -44,20 +44,6 @@ public class Server {
         
         String id = (String) httpSession.getAttribute("id");
         session.getUserProperties().put("id", id);
-//        if(sessionExitTimestamps.containsKey(id + room)) {
-//        	long exitTimestamp = sessionExitTimestamps.get(id + room);
-//        	long currentTime = System.currentTimeMillis();
-//        	long timeDiff = currentTime - exitTimestamp;
-//        	
-//        	if(timeDiff <5000) {
-//        		try {
-//        			session.close(new CloseReason(CloseReason.CloseCodes.UNEXPECTED_CONDITION,"새로고침"));
-//        			return;
-//        		} catch(IOException e) {
-//        			e.printStackTrace();
-//        		}
-//        	}
-//        }
         // 입장 메시지 전송
         String message = "System: " + id + "님께서 입장하셨습니다.";
         sendMessageToRoom(room, message);
@@ -67,7 +53,6 @@ public class Server {
     public void onClose(Session session) {
         String room = (String) session.getUserProperties().get("room");
         String userId = (String) session. getUserProperties().get("id");
-//        sessionExitTimestamps.put(userId + room,System.currentTimeMillis());
         
         clients.remove(session);
   

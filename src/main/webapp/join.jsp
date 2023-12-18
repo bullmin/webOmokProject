@@ -24,23 +24,13 @@
 		httpRequest.overrideMimeType('text/xml');
 	}
 	function registerCheckFunction(){
-//		var userEmail = document.getElementById("userEmail").value;
 		var id = document.getElementById("id").value;
 		httpRequest.open("POST", "userRegisterCheckServlet", true);
-//		var qry = "userEmail=" + userEmail;
 		var qry = "id=" + id;
 		httpRequest.onreadystatechange = getResult;
 		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		httpRequest.send(qry);
 	}
-	/* function nickNameCheckFunction(){
-		var userNickName = document.getElementById("userNickName").value;
-		httpRequest.open("POST", "userNickNameCheckServlet", true);
-		var qry = "userNickName=" + userNickName;
-		httpRequest.onreadystatechange = getNickNameResult;
-		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		httpRequest.send(qry);
-	} */
 	function getResult(){
 	    if (httpRequest.readyState === XMLHttpRequest.DONE) {
 	        if (httpRequest.status === 200) {

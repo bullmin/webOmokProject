@@ -25,6 +25,7 @@ public class GameRoom {
 	
 	public void exitUser(GameUser user) {
         userList.remove(user);
+        
         // 사용자가 방에서 나가면서 방이 비어있으면 방을 닫음
         if (userList.isEmpty()) {
             RoomManager.removeRoom(this);

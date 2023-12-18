@@ -39,7 +39,8 @@ public class JoinRoomServlet extends HttpServlet {
                 // 방 참여
                 GameUser user = new GameUser(userId);
                 roomToJoin.enterUser(user);
-
+                RoomManager.setRoomList(RoomManager.getRoomList());
+                session.setAttribute("roomList", roomList);
                 // 게임 방 페이지로 리다이렉션
                 String redirectURL = "gameRoom.jsp?roomName=" + roomName;
                 response.sendRedirect(redirectURL);

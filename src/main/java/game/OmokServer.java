@@ -61,6 +61,7 @@ public class OmokServer {
         }
         System.out.println(message);
     }
+    
     private boolean isTurnBlack(String color) {
     	if(color.equals("black")) {
     		return true;
@@ -96,7 +97,6 @@ public class OmokServer {
     			 	 players++;
     	        }
     	    }
-
     	    return players >= 2;
     }
 
@@ -112,7 +112,6 @@ public class OmokServer {
                         String userColor = playerColors.get(userSession.getUserProperties().get("id"));
                         gameState += ":" + userColor;
                     }
-
                     userSession.getBasicRemote().sendText(gameState);
                     System.out.println(gameState);
                 }

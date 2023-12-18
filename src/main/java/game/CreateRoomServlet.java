@@ -23,7 +23,7 @@ public class CreateRoomServlet extends HttpServlet {
             // 폼에서 입력한 방 이름 가져오기
             String roomName = request.getParameter("roomName");
 
-            // 현재 사용자를 owner로 하는 방 생성
+            // 방장이 owner인 방 생성
             GameUser owner = new GameUser(userId);
             GameRoom room = RoomManager.createRoom(roomName, owner);
             
@@ -31,7 +31,7 @@ public class CreateRoomServlet extends HttpServlet {
             List<GameRoom> roomList = RoomManager.getRoomList();
             session.setAttribute("roomList", roomList);
 
-            // 방 목록 화면으로 이동
+            //방으로 이동
             String redirectURL = "gameRoom.jsp?roomName="+roomName;
             response.sendRedirect(redirectURL);
         } else {

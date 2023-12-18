@@ -6,9 +6,7 @@ import java.util.List;
 public class RoomManager {
 	private static List<GameRoom> roomList = new ArrayList<>();
 
-	public RoomManager() {
-		
-	}
+	public RoomManager() {}
 	
 	public static GameRoom createRoom(String roomName,GameUser owner) { // 유저가 방을 생성할 때 사용(유저가 방장으로 들어감)
 			
