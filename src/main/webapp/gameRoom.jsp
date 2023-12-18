@@ -90,6 +90,9 @@
     // 통신을 위한 WebSocket 객체
     var webSocket;
 	var omokSocket;
+	var stonColor = "unknown";
+	var gameState = false;
+	var currentTurn = "black";
     // WebSocket 연결을 초기화하는 함수
     function connectWebSocket() {
         // URL 파라미터에서 방 이름 가져오기
@@ -132,7 +135,6 @@
     // Function to send a message when Enter key is pressed
     function handleKeyPress(event) {
         if (event.keyCode === 13) {
-            event.preventDefault();
             sendMessage();
         }
     }
@@ -147,6 +149,26 @@
 
         omokSocket.onmessage = function (event) {
             console.log(event.data);
+            var message = event.data;
+            var messageSplit = message.split(':');
+            if(messageSplit[0] === "startGame"){
+            	stoneColor = messageSplit[1];
+            	removeStone();
+            	gameState = true;
+            	console.log(stoneColor);
+            }
+            else if(messageSplit[0] === "StoneMove"){
+            	var move = messageSplit[1]
+            	var row = move.split(',')[0];
+            	var col = move.split(',')[1];
+            	drawStone(row, col);
+            }
+            if(messageSplit[1] === "ChangeTurn"){
+            	currentTurn = currentTurn === "black" ? "white" : "black";
+            }
+            else if(messageSplit[1] === "NotReady"){
+            	alert("상대가 없습니다.");
+            }
         };
 
         omokSocket.onclose = function (event) {
@@ -159,6 +181,28 @@
 			omokSocket.send(message);
 		}
 	}
+	function sendOmokMessage(message){
+		return new Promise((resolve, reject) => {
+	        if (omokSocket.readyState === WebSocket.OPEN) {
+	            omokSocket.send(message);
+	            resolve("Message sent successfully");
+	        } else {
+	            reject("WebSocket is not open");
+	        }
+	    });		
+	}
+	async function drawStone(row, col) {
+    	const cell = document.querySelector('.baduk-intersection[data-row="' + row + '"][data-col="' + col + '"]');
+    	
+        const stone = document.createElement("div");
+        stone.className = "stone";
+        stone.style.backgroundColor = currentTurn === "black" ? "#000" : "#fff"; // 턴에 따라 색 변경
+
+        // 해당 칸에 돌 추가
+        cell.appendChild(stone);
+        await new Promise(resolve => setTimeout(resolve, 100)); // 기다리기
+        sendOmokMessage("ChangeTurn");
+    }
     document.addEventListener("DOMContentLoaded", function () {
         connectWebSocket();
         connectOmokSocket()
@@ -205,7 +249,7 @@
 			<div id="gameStart">
 				<input type="button" value="게임 시작" 
 				<%
-					if((roomOwner != null && roomOwner.equals(id))|| gameRoom.getUserList().size() < 2){
+					if((roomOwner != null && roomOwner.equals(id))){
 				%> onclick="startGame()"
 				<%
 					} else {
@@ -229,7 +273,6 @@
 	<script>
 	document.addEventListener("DOMContentLoaded", function () {
 	    const badukBoard = document.getElementById("baduk-board");
-	    let currentTurn = "black"; // 초기 턴은 흑돌
 
 	    // 바둑판 그리기
 	    for (let row = 0; row < 18; row++) {
@@ -248,35 +291,29 @@
 	            });
 
 	            intersection.addEventListener("click", function () {
-	                drawStone(this);
+	            	if(gameState === false  || currentTurn != stoneColor){
+	            		event.preventDefault();
+	            		return;
+	            	}
+	            	if (intersection.querySelector(".stone")) {
+	                    alert("이미 바둑돌이 있는 곳에 다시 돌을 둘 수 없습니다.");
+	                    return;
+	                }
+	            	const row = this.dataset.row;
+	                const col = this.dataset.col;
+	                sendOmokMessage("stoneMove:" + row + "," + col);
 	            });
 
 	            badukBoard.appendChild(intersection);
 	        }
-	    }
-
-	    // 돌을 그리는 함수
-	    function drawStone(cell) {
-	        // 이미 돌이 그려진 경우 무시
-	        if (cell.querySelector(".stone")) {
-	        	alert("이미 바둑돌이 있는 곳에 다시 돌을 둘 수 없습니다.")
-	            return;
-	        }
-
-	        const stone = document.createElement("div");
-	        stone.className = "stone";
-	        stone.style.backgroundColor = currentTurn === "black" ? "#000" : "#fff"; // 턴에 따라 색 변경
-
-	        // 해당 칸에 돌 추가
-	        cell.appendChild(stone);
-
-	        // 턴 변경
-	        currentTurn = currentTurn === "black" ? "white" : "black";
-	    }
+	    }	    
 	});
 	function removeStone(){
 		var stones = document.getElementsByClassName("stone");
-		stones.parentNode.removeChild(stones);
+		
+		if (stones && stones.length > 0) {
+	        stones[0].parentNode.removeChild(stones[0]);
+	    }
 	}
 		function leaveRoom() {
 	        location.href = 'LeaveRoomServlet';

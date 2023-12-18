@@ -36,20 +36,45 @@ public class OmokServer {
         playerColors.put(id, "unknown"); // 초기 돌 색은 "unknown"으로 설정
 
         // 초기 게임 상태를 모든 클라이언트에게 브로드캐스트
-        broadcastGameState(session, room, 1);
+        broadcastGameState(session, room, "boardReset");
     }
 
     @OnMessage
     public void onMessage(Session session, String message, @PathParam("room") String room) {
         if ("startGame".equals(message)) {
             assignRandomStoneColors(room);
-            if(checkAllPlayersReady(room)) {
-            	
+            if(!checkAllPlayersReady(room)) {
+            	broadcastGameState(session, room, "NotReady");
             }
-            broadcastGameState(session, room, 1);
+            else {
+            	broadcastGameState(session, room, "startGame");
+            }
+            
+        }
+        else if("ChangeTurn".equals(message)) {
+        	handleTurnChange(session, room);
+        }
+        else if(message.startsWith("stoneMove:")) {
+        	String[] messageSplit = message.substring("stoneMove:".length()).split(",");
+        	handleStoneMove(messageSplit[0], messageSplit[1], room);
         }
         System.out.println(message);
-        System.out.println(playerColors);
+    }
+    
+    private void handleTurnChange(Session senderSession, String room) {
+        String gameState = "ChangeTurn";
+
+        try {
+            for (Session userSession : sessions) {
+                if (userSession.isOpen() && userSession.getUserProperties().get("room") != null &&
+                        userSession.getUserProperties().get("room").equals(room) &&
+                        !userSession.equals(senderSession)) { // 중복 방지를 위해 현재 세션과 같은 세션에는 보내지 않도록 추가
+                    userSession.getBasicRemote().sendText(gameState);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClose
@@ -84,35 +109,62 @@ public class OmokServer {
     	    return players >= 2;
     }
 
-    private void broadcastGameState(Session currentSession, String room, int num) {
+    private void broadcastGameState(Session currentSession, String room, String message) {
         try {
             for (Session userSession : sessions) {
                 if (userSession.isOpen() && userSession.getUserProperties().get("room") != null &&
                         userSession.getUserProperties().get("room").equals(room)) {
-                    String gameState = createGameState(num);
-                    currentSession.getBasicRemote().sendText(gameState);
+                    String gameState = createGameState(message);
+
+                    if ("startGame".equals(message)) {
+                        // 동일한 방에 있는 각 세션에 사용자 색상 정보를 추가합니다.
+                        String userColor = playerColors.get(userSession.getUserProperties().get("id"));
+                        gameState += ":" + userColor;
+                    }
+
+                    userSession.getBasicRemote().sendText(gameState);
                     System.out.println(gameState);
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private String createGameState(int num) {
+    private String createGameState(String rMessage) {
         String message = "";
-        switch (num) {
-            case 1:
-                message = "boardReset";
+        switch (rMessage) {
+            case "boardReset":
+                message = "message:boardReset";
                 break;
-            case 2:
+            case "startGame":
                 message = "startGame";
                 break;
-            case 3:
-                message = "NotReady";
+            case "NotReady":
+                message = "message:NotReady";
+                break;
+            case "ChangeTurn":
+                message = "message:ChangeTurn";
                 break;
         }
         return message;
     }
+    
+    private void handleStoneMove(String row, String col, String room) {
+    	System.out.println(row + ":" + col);
+    	for (Session userSession : sessions) {
+		    if (userSession.isOpen() && userSession.getUserProperties().get("room") != null &&
+		            userSession.getUserProperties().get("room").equals(room)) {
+		        String gameState = "StoneMove:"+ row + "," + col;
+		        
+		        try {
+					userSession.getBasicRemote().sendText(gameState);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		}
+    }
+    
 }
